@@ -5,6 +5,7 @@ import (
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
+	"github.com/Guizzs26/go-fyne-lib-testing/internal/excel"
 )
 
 /*
@@ -19,7 +20,7 @@ Responsável por:
 func CreateWindow() {
 	app := app.New()
 	mainWindow := app.NewWindow("Excel generator")
-
+	mainWindow.SetMaster()
 	mainWindow.Resize(fyne.NewSize(400, 200))
 
 	firstNameEntry := widget.NewEntry()
@@ -38,7 +39,13 @@ func CreateWindow() {
 	randomFloatValueEntry.SetPlaceHolder("Enter any decimal value")
 
 	generateExcelButton := widget.NewButton("Generate Excel Spreadsheet", func() {
+		firstName := firstNameEntry.Text
+		lastName := lastNameEntry.Text
+		ageStr := ageEntry.Text
+		birthdayStr := birthdayEntry.Text
+		randomFloatStr := randomFloatValueEntry.Text
 
+		excel.GenerateExcel(firstName, lastName, ageStr, birthdayStr, randomFloatStr)
 	})
 
 	content := container.NewVBox(

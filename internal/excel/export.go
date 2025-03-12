@@ -7,8 +7,11 @@ import (
 	"github.com/xuri/excelize/v2"
 )
 
-func GenerateExcel() {
+func GenerateExcel(firstName, lastName, age, birthday, randomFloat string) {
 	file := excelize.NewFile()
+
+	sheetName := "Planilha Teste"
+	file.SetSheetName("Sheet1", sheetName)
 
 	defer func() {
 		if err := file.Close(); err != nil {
@@ -16,16 +19,17 @@ func GenerateExcel() {
 		}
 	}()
 
-	headers := []string{"First Name", "Last Name", "Age", "Birthday", "Decimal"}
+	headers := []interface{}{firstName, lastName, birthday, randomFloat}
 	for i, header := range headers {
-		file.SetCellValue("Sheet1", fmt.Sprintf("%s%d", string(rune(65+i)), 1), header)
+		// Rune converte o valor numérico para um caractece (rune é um tipo em Go que representa um caractere unicode)
+		// string(rune()) -> Converte o caractere para string
+		// O 1 fixo é porque a coluna fica na primeira linha da planilha apenas
+		cell := fmt.Sprintf("%s%d", string(rune(65+i)), 1)
+		file.SetCellValue("Sheet1", cell, header)
 	}
 
-	data := [][]interface{}{
-		{"Guilherme", "Teixeira", 21, "26/05/2003", 67.5},
-		{"Cristian", "Santos", 28, "17/03/2005", 0.12381},
-		{"Izabel", "Araújo", 18, "19/05/2003", 44.5},
-	}
+	// Preciso implementar uma forma de validar e transformar os dados antes de chamar a função para gerar o excel
+	data := [][]interface{}{firstName, lastName, age, birthday, randomFloat}
 
 	for i, row := range data {
 		dataRow := i + 2
