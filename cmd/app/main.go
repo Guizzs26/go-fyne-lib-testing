@@ -3,6 +3,7 @@ package main
 import (
 	"time"
 
+	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/widget"
 )
@@ -13,19 +14,22 @@ func updateTime(clock *widget.Label) {
 }
 
 func main() {
-	app := app.New()                       // Cria uma nova aplicação do Fyne. Como se fosse uma nova instância do Fyne.
-	window := app.NewWindow("Hello World") // Cria uma nova janela com o TÍTULO "Hello World".
+	app := app.New()                 // Cria uma nova aplicação do Fyne. Como se fosse uma nova instância do Fyne.
+	window := app.NewWindow("Clock") // Cria uma nova janela com o TÍTULO "Hello World".
+	window.SetMaster()               // Podemos definir uma janela principal para nossa aplicação. Podemos ter uma janela principal e várias secundárias.
+	// Se a "master" for fechada, toda aplicação será encerrada automaticamente.
+	window.Resize(fyne.NewSize(400, 400)) // Modifica o tamanho da janela.
 
 	// Aqui estamos aprendendo a atualizar um valor. Precisamos passar uma label (por exemplo) vazia e atribuir para uma variável, pois o retorno dessa função é uma referência
 	// à label criada, então podemos atualiza-la depois.
 	// formatted := time.Now().Format("Time 03:04:05")
 	// clock.SetText(formatted)
 	clock := widget.NewLabel("")
+	window.SetContent(clock)
 	updateTime(clock)
 
 	// window.SetContent(widget.NewLabel("Hello World")) // Define o conteúdo dessa janela através de uma label fixa.
 
-	window.SetContent(clock)
 	// IIFE -> Immediately Invoked Function Expression, é uma função anônima que é automaticamente criada e executada. Usamos uma goroutine também para executar o código de forma assíncrona.
 	// Aqui que mora a magia da execução em segundo plano de forma concorrente (pararelo) !!!
 	go func() {
@@ -34,8 +38,22 @@ func main() {
 			updateTime(clock)
 		}
 	}()
+	window.Show()
 
-	window.ShowAndRun() // Exibe a janela e roda a aplicação
+	// Criação de uma segunda janela. Como explicado anteriormente, precisamos agora chamar o Show() individualmente para cada uma.
+	window2 := app.NewWindow("Second window")
+	window2.SetContent(widget.NewLabel("Second - More content!"))
+	window2.Show()
+
+	// Podemos criar janelas de forma dinâmica:
+	window2.SetContent(widget.NewButton("Open new", func() {
+		window3 := app.NewWindow("Third window")
+		window3.SetContent(widget.NewLabel("Third - More content!!!"))
+		window3.Show()
+	}))
+
+	app.Run()
+	// window.ShowAndRun() // Exibe a janela e roda a aplicação
 	/*
 		Também podemos fazer da seguinte forma:
 
