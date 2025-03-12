@@ -1,0 +1,38 @@
+# Build output
+/bin/
+/obj/
+/dist/
+
+# Ignorar arquivos gerados pelo Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Ignorar arquivos de cache do Go
+/.cache/
+/go-build/
+*.log
+*.out
+
+# Ignorar arquivos de cache de dependências
+.golangci.yml
+.golangci-cache/
+
+# Ignorar arquivos de log
+*.log
+
+# Ignorar arquivos de sistema operacional (Mac, Windows...)
+.DS_Store
+Thumbs.db
+
+# Ignorar arquivos de IDE/Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignorar arquivos de configuração local
+.env
+.env.local
