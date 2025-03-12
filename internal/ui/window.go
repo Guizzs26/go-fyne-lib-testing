@@ -1,8 +1,6 @@
 package ui
 
 import (
-	"fmt"
-
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
@@ -18,11 +16,11 @@ Responsável por:
 - Organizar esses componentes com layouts do container do Fyne
 - Exibir a janela
 */
-func createWindow() {
+func CreateWindow() {
 	app := app.New()
 	mainWindow := app.NewWindow("Excel generator")
 
-	mainWindow.Resize(fyne.NewSize(400, 300))
+	mainWindow.Resize(fyne.NewSize(400, 200))
 
 	firstNameEntry := widget.NewEntry()
 	firstNameEntry.SetPlaceHolder("Enter your first name")
@@ -40,7 +38,7 @@ func createWindow() {
 	randomFloatValueEntry.SetPlaceHolder("Enter any decimal value")
 
 	generateExcelButton := widget.NewButton("Generate Excel Spreadsheet", func() {
-		fmt.Println("Press button")
+
 	})
 
 	content := container.NewVBox(
