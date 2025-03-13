@@ -33,7 +33,7 @@ func GenerateExcel(firstName, lastName string, age int, birthday string, randomF
 	}
 
 	if err := file.SaveAs("test.xlsx"); err != nil {
-		fmt.Println("Error :", err)
+		fmt.Println("Error saving the spreadsheet :", err)
 		return
 	}
 }
