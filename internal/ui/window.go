@@ -2,6 +2,7 @@ package ui
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 
 	"fyne.io/fyne/v2"
@@ -13,22 +14,22 @@ import (
 )
 
 // Estou tratando datas como string (ainda não sei como lidar com datas)
-func validateAndTransformInputs(firstName, lastName, ageStr, birthday, randomFloatStr string) (models.FormData, error) {
+func validateAndTransformInputs(firstName, lastName, ageStr, birthday, randomFloatStr string) (*models.FormData, error) {
 	if firstName == "" || lastName == "" || ageStr == "" || birthday == "" || randomFloatStr == "" {
-		return models.FormData{}, errors.New("all fields must be filled")
+		return nil, errors.New("all fields must be filled")
 	}
 
 	age, err := strconv.Atoi(ageStr)
 	if err != nil {
-		return models.FormData{}, errors.New("invalid age format, must be an integer")
+		return nil, errors.New("invalid age format, must be an integer")
 	}
 
 	randomFloat, err := strconv.ParseFloat(randomFloatStr, 64)
 	if err != nil {
-		return models.FormData{}, errors.New("invalid decimal value format")
+		return nil, errors.New("invalid decimal value format")
 	}
 
-	return models.FormData{
+	return &models.FormData{
 		FirstName:   firstName,
 		LastName:    lastName,
 		Age:         age,
@@ -68,10 +69,11 @@ func createInputFields() (*widget.Entry, *widget.Entry, *widget.Entry, *widget.E
 
 		formData, err := validateAndTransformInputs(firstName, lastName, ageStr, birthday, randomFloatStr)
 		if err != nil {
+			fmt.Println("Validation Error:", err)
 			return
 		}
 
-		excel.GenerateExcel(formData)
+		excel.GenerateExcel(formData, "")
 	})
 
 	return firstNameInput, lastNameInput, ageInput, birthdayInput, randomFloatInput, generateExcelButton
