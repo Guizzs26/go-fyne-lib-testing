@@ -36,3 +36,6 @@ Thumbs.db
 # Ignorar arquivos de configuração local
 .env
 .env.local
+
+# Ignorar arquivos excel
+*.xlsx
