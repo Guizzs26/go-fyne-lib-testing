@@ -75,6 +75,7 @@ func checkEmptyFields(firstName, lastName, ageStr, birthday, randomFloatStr stri
 	if len(missingFields) > 0 {
 		return fmt.Errorf("the following fields must be filled: %s", strings.Join(missingFields, ", "))
 	}
+
 	return nil
 }
 
