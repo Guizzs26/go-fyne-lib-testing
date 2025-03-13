@@ -1,8 +1,7 @@
 package main
 
-import "github.com/Guizzs26/go-fyne-lib-testing/internal/excel"
+import "github.com/Guizzs26/go-fyne-lib-testing/internal/ui"
 
 func main() {
-	// ui.CreateWindow()
-	excel.GenerateExcel()
+	ui.CreateWindow()
 }

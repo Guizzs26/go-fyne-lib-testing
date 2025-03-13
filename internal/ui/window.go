@@ -11,54 +11,72 @@ import (
 /*
 Responsável por:
 
-- Criar a janela principal
 - Criar os campos de input (com o widget do Fyne)
-- Adicionar o botão "Gerar excel"
-- Organizar esses componentes com layouts do container do Fyne
-- Exibir a janela
+- Adicionar o botão "Gerar excel" que chama a função responsável por gerar o Excel
+*/
+func createInputFields() (*widget.Entry, *widget.Entry, *widget.Entry, *widget.Entry, *widget.Entry, *widget.Button) {
+	firstNameInput := widget.NewEntry()
+	firstNameInput.SetPlaceHolder("Enter your first name")
+
+	lastNameInput := widget.NewEntry()
+	lastNameInput.SetPlaceHolder("Enter your last name")
+
+	ageInput := widget.NewEntry()
+	ageInput.SetPlaceHolder("Enter your age")
+
+	birthdayInput := widget.NewEntry()
+	birthdayInput.SetPlaceHolder("Enter your birthday date (dd/mm/aaaa)")
+
+	randomFloatValueInput := widget.NewEntry()
+	randomFloatValueInput.SetPlaceHolder("Enter any decimal value")
+
+	generateExcelButton := widget.NewButton("Generate Excel Spreadsheet", func() {
+		firstName := firstNameInput.Text
+		lastName := lastNameInput.Text
+		ageStr := ageInput.Text
+		birthdayStr := birthdayInput.Text
+		randomFloatStr := randomFloatValueInput.Text
+
+		excel.GenerateExcel(firstName, lastName, ageStr, birthdayStr, randomFloatStr)
+	})
+
+	return firstNameInput, lastNameInput, ageInput, birthdayInput, randomFloatValueInput, generateExcelButton
+}
+
+/*
+Responsável por:
+
+  - Organizar esses componentes o container do Fyne
+*/
+func createLayout(firstName, lastName, age, birthday, randomFloat *widget.Entry, button *widget.Button) *fyne.Container {
+	return container.NewVBox(
+		widget.NewLabel("Fill in the data to generate the Excel"),
+		firstName,
+		lastName,
+		age,
+		birthday,
+		randomFloat,
+		button,
+	)
+}
+
+/*
+Responsável por:
+
+  - Pela manipulação da janela principal (criação, definição da janela como principal, centralizar, modificar tamanho)
+  - Setar o conteúdo
+  - Exibir a janela e inicar o loop do Fyne
 */
 func CreateWindow() {
 	app := app.New()
 	mainWindow := app.NewWindow("Excel generator")
 	mainWindow.SetMaster()
+	mainWindow.CenterOnScreen()
 	mainWindow.Resize(fyne.NewSize(400, 200))
 
-	firstNameEntry := widget.NewEntry()
-	firstNameEntry.SetPlaceHolder("Enter your first name")
-
-	lastNameEntry := widget.NewEntry()
-	lastNameEntry.SetPlaceHolder("Enter your last name")
-
-	ageEntry := widget.NewEntry()
-	ageEntry.SetPlaceHolder("Enter your age")
-
-	birthdayEntry := widget.NewEntry()
-	birthdayEntry.SetPlaceHolder("Enter your birthday date (dd/mm/aaaa)")
-
-	randomFloatValueEntry := widget.NewEntry()
-	randomFloatValueEntry.SetPlaceHolder("Enter any decimal value")
-
-	generateExcelButton := widget.NewButton("Generate Excel Spreadsheet", func() {
-		firstName := firstNameEntry.Text
-		lastName := lastNameEntry.Text
-		ageStr := ageEntry.Text
-		birthdayStr := birthdayEntry.Text
-		randomFloatStr := randomFloatValueEntry.Text
-
-		excel.GenerateExcel(firstName, lastName, ageStr, birthdayStr, randomFloatStr)
-	})
-
-	content := container.NewVBox(
-		widget.NewLabel("Fill in the data to generate the Excel"),
-		firstNameEntry,
-		lastNameEntry,
-		ageEntry,
-		birthdayEntry,
-		randomFloatValueEntry,
-		generateExcelButton,
-	)
+	firstNameInput, lastNameInput, ageInput, birthdayInput, randomFloatValueInput, generateExcelButton := createInputFields()
+	content := createLayout(firstNameInput, lastNameInput, ageInput, birthdayInput, randomFloatValueInput, generateExcelButton)
 
 	mainWindow.SetContent(content)
-
 	mainWindow.ShowAndRun()
 }
