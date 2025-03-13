@@ -3,7 +3,9 @@ package ui
 import (
 	"errors"
 	"fmt"
+	"regexp"
 	"strconv"
+	"time"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -19,14 +21,26 @@ func validateAndTransformInputs(firstName, lastName, ageStr, birthday, randomFlo
 		return nil, errors.New("all fields must be filled")
 	}
 
+	if !isValidName(firstName) || !isValidName(lastName) {
+		return nil, errors.New("first name and last name can only contain letters, spaces, hyphens, or apostrophes")
+	}
+
 	age, err := strconv.Atoi(ageStr)
 	if err != nil {
 		return nil, errors.New("invalid age format, must be an integer")
 	}
 
+	if age < 0 || age > 120 {
+		return nil, errors.New("age must be a positive value and less than or equal to 120")
+	}
+
 	randomFloat, err := strconv.ParseFloat(randomFloatStr, 64)
 	if err != nil {
 		return nil, errors.New("invalid decimal value format")
+	}
+
+	if !isValidRealDate(birthday) {
+		return nil, errors.New("invalid birthday date, must be a real date in the format dd/mm/yyyy")
 	}
 
 	return &models.FormData{
@@ -38,6 +52,45 @@ func validateAndTransformInputs(firstName, lastName, ageStr, birthday, randomFlo
 	}, nil
 }
 
+// Valida a data no formato dd/mm/yyyy usando o regex
+func isValidRealDate(dateStr string) bool {
+	layout := "02/01/2006" // Formato dd/mm/yyyy da lib time do Golang (a doc explica o significa dos dígitos)
+	_, err := time.Parse(layout, dateStr)
+	return err == nil
+}
+
+// Permite apenas letras
+func isValidName(input string) bool {
+	return regexp.MustCompile(`^[a-zA-ZÀ-ÿ\s'-]+$`).MatchString(input)
+}
+
+/*
+Reponsável por:
+- Criar e retornar um campo de entrada (Entry) do fyne e definir o placeholder do input
+*/
+func newInputField(placeholder string) *widget.Entry {
+	input := widget.NewEntry()
+	input.SetPlaceHolder(placeholder)
+	return input
+}
+
+/*
+Reponsável por:
+- Receber os dados validados e chamar a função generate excel para gerar a planilha
+*/
+func onGenerateExcel(firstName, lastName, age, birthday, randomFloat *widget.Entry) {
+	formData, err := validateAndTransformInputs(firstName.Text, lastName.Text, age.Text, birthday.Text, randomFloat.Text)
+	if err != nil {
+		fmt.Println("Validation error", err)
+		return
+	}
+
+	excelErr := excel.GenerateExcel(formData, "Arquivo.xlsx")
+	if excelErr != nil {
+		fmt.Println("Error generating excel", excelErr)
+	}
+}
+
 /*
 Responsável por:
 
@@ -45,35 +98,14 @@ Responsável por:
 - Adicionar o botão "Gerar excel" que chama a função responsável por gerar o Excel
 */
 func createInputFields() (*widget.Entry, *widget.Entry, *widget.Entry, *widget.Entry, *widget.Entry, *widget.Button) {
-	firstNameInput := widget.NewEntry()
-	firstNameInput.SetPlaceHolder("Enter your first name")
-
-	lastNameInput := widget.NewEntry()
-	lastNameInput.SetPlaceHolder("Enter your last name")
-
-	ageInput := widget.NewEntry()
-	ageInput.SetPlaceHolder("Enter your age")
-
-	birthdayInput := widget.NewEntry()
-	birthdayInput.SetPlaceHolder("Enter your birthday date (dd/mm/aaaa)")
-
-	randomFloatInput := widget.NewEntry()
-	randomFloatInput.SetPlaceHolder("Enter any decimal value")
+	firstNameInput := newInputField("Enter your first name")
+	lastNameInput := newInputField("Enter your last name")
+	ageInput := newInputField("Enter your age")
+	birthdayInput := newInputField("Enter your birthday date (dd/mm/yyyy)")
+	randomFloatInput := newInputField("Enter any decimal value")
 
 	generateExcelButton := widget.NewButton("Generate Excel Spreadsheet", func() {
-		firstName := firstNameInput.Text
-		lastName := lastNameInput.Text
-		ageStr := ageInput.Text
-		birthday := birthdayInput.Text
-		randomFloatStr := randomFloatInput.Text
-
-		formData, err := validateAndTransformInputs(firstName, lastName, ageStr, birthday, randomFloatStr)
-		if err != nil {
-			fmt.Println("Validation Error:", err)
-			return
-		}
-
-		excel.GenerateExcel(formData, "")
+		onGenerateExcel(firstNameInput, lastNameInput, ageInput, birthdayInput, randomFloatInput)
 	})
 
 	return firstNameInput, lastNameInput, ageInput, birthdayInput, randomFloatInput, generateExcelButton
