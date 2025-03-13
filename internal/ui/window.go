@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"fyne.io/fyne/v2"
@@ -17,8 +18,8 @@ import (
 
 // Estou tratando datas como string (ainda não sei como lidar com datas)
 func validateAndTransformInputs(firstName, lastName, ageStr, birthday, randomFloatStr string) (*models.FormData, error) {
-	if firstName == "" || lastName == "" || ageStr == "" || birthday == "" || randomFloatStr == "" {
-		return nil, errors.New("all fields must be filled")
+	if err := checkEmptyFields(firstName, lastName, ageStr, birthday, randomFloatStr); err != nil {
+		return nil, err
 	}
 
 	if !isValidName(firstName) || !isValidName(lastName) {
@@ -50,6 +51,31 @@ func validateAndTransformInputs(firstName, lastName, ageStr, birthday, randomFlo
 		Birthday:    birthday,
 		RandomFloat: randomFloat,
 	}, nil
+}
+
+func checkEmptyFields(firstName, lastName, ageStr, birthday, randomFloatStr string) error {
+	var missingFields []string
+
+	if firstName == "" {
+		missingFields = append(missingFields, "first name")
+	}
+	if lastName == "" {
+		missingFields = append(missingFields, "last name")
+	}
+	if ageStr == "" {
+		missingFields = append(missingFields, "age")
+	}
+	if birthday == "" {
+		missingFields = append(missingFields, "birthday")
+	}
+	if randomFloatStr == "" {
+		missingFields = append(missingFields, "decimal value")
+	}
+
+	if len(missingFields) > 0 {
+		return fmt.Errorf("the following fields must be filled: %s", strings.Join(missingFields, ", "))
+	}
+	return nil
 }
 
 // Valida a data no formato dd/mm/yyyy usando o regex
