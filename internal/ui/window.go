@@ -2,7 +2,6 @@ package ui
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 
 	"fyne.io/fyne/v2"
@@ -10,25 +9,32 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 	"github.com/Guizzs26/go-fyne-lib-testing/internal/excel"
+	"github.com/Guizzs26/go-fyne-lib-testing/internal/models"
 )
 
 // Estou tratando datas como string (ainda não sei como lidar com datas)
-func validateAndTransformInputs(firstName, lastName, ageStr, birthday, randomFloatStr string) (string, string, int, string, float64, error) {
+func validateAndTransformInputs(firstName, lastName, ageStr, birthday, randomFloatStr string) (models.FormData, error) {
 	if firstName == "" || lastName == "" || ageStr == "" || birthday == "" || randomFloatStr == "" {
-		return "", "", 0, "", 0, errors.New("all fields must be filled")
+		return models.FormData{}, errors.New("all fields must be filled")
 	}
 
 	age, err := strconv.Atoi(ageStr)
 	if err != nil {
-		return "", "", 0, "", 0, errors.New("invalid age format, must be an integer")
+		return models.FormData{}, errors.New("invalid age format, must be an integer")
 	}
 
 	randomFloat, err := strconv.ParseFloat(randomFloatStr, 64)
 	if err != nil {
-		return "", "", 0, "", 0, errors.New("invalid decimal value format")
+		return models.FormData{}, errors.New("invalid decimal value format")
 	}
 
-	return firstName, lastName, age, birthday, randomFloat, nil
+	return models.FormData{
+		FirstName:   firstName,
+		LastName:    lastName,
+		Age:         age,
+		Birthday:    birthday,
+		RandomFloat: randomFloat,
+	}, nil
 }
 
 /*
@@ -60,13 +66,12 @@ func createInputFields() (*widget.Entry, *widget.Entry, *widget.Entry, *widget.E
 		birthday := birthdayInput.Text
 		randomFloatStr := randomFloatInput.Text
 
-		firstName, lastName, age, birthday, randomFloat, err := validateAndTransformInputs(firstName, lastName, ageStr, birthday, randomFloatStr)
+		formData, err := validateAndTransformInputs(firstName, lastName, ageStr, birthday, randomFloatStr)
 		if err != nil {
-			fmt.Println("Validation Error:", err)
 			return
 		}
 
-		excel.GenerateExcel(firstName, lastName, age, birthday, randomFloat)
+		excel.GenerateExcel(formData)
 	})
 
 	return firstNameInput, lastNameInput, ageInput, birthdayInput, randomFloatInput, generateExcelButton
