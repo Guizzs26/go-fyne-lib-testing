@@ -46,6 +46,10 @@ go install fyne.io/fyne/v2/cmd/fyne@latest
 go build -o ./bin/excel-generator.exe .\cmd\app\main.go (.exe é necessário no windows).
 ```
 
+```bash  
+go build -o "C:\Users\SeuUsuario\Desktop\excel-generator.exe" .\cmd\app\main.go (Exemplo de geraçao em um diretório qualquer, no caso, a área de trabalho).
+```
+
 5. **Execute a aplicação:**
 
 Apenas um exemplo de como executar a aplicação, mas você deve executar no caminho onde o .exe foi salvo.
