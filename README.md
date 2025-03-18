@@ -1,6 +1,6 @@
 # 🧮 Excel Generator
 
-O **Excel Generator** é uma aplicação **PROTÓTIPO** desenvolvida em **Golang** com a interface gráfica **Fyne** que permite ao usuário gerar planilhas Excel (.xlsx) a partir de entradas de dados. 
+O **Excel Generator** é uma aplicação **PROTÓTIPO** desenvolvida em **Golang** com a ferramenta de desenvolvimento dekstop **Fyne** que permite ao usuário gerar planilhas Excel (.xlsx) a partir de entradas de dados. 
 Se a planilha já existir, novos dados serão adicionados a ela, sem sobrescrever os dados anteriores.
 
 Não foi implementada nenhuma melhoria na interface gráfica, como layout, estilo e afins.
